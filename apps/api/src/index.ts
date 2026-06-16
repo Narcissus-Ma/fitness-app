@@ -1,8 +1,16 @@
-import type { ResourceItem } from '@fitness/shared';
+import type { ResourceItem, SiteSettings } from '@fitness/shared';
 
 import { getBearerToken, signToken, verifyPassword, verifyToken } from './auth';
 import { createCorsHeaders, json, readJson, resolveCorsOrigin } from './http';
-import { deleteItem, getItem, isResourceName, listItems, upsertItem } from './storage';
+import {
+  deleteItem,
+  getItem,
+  getSiteSettings,
+  isResourceName,
+  listItems,
+  updateSiteSettings,
+  upsertItem,
+} from './storage';
 
 export interface Env {
   FITNESS_KV: KVNamespace;
@@ -66,6 +74,17 @@ const handleAdmin = async (request: Request, env: Env, parts: string[], origin: 
     return json({ error: '未登录或登录已过期' }, { status: 401 }, origin);
   }
 
+  if (parts[2] === 'settings') {
+    if (request.method === 'GET') {
+      return json({ data: await getSiteSettings(env.FITNESS_KV) }, {}, origin);
+    }
+    if (request.method === 'PUT') {
+      const body = await readJson<Partial<SiteSettings>>(request);
+      return json({ data: await updateSiteSettings(env.FITNESS_KV, body) }, {}, origin);
+    }
+    return json({ error: '方法不支持' }, { status: 405 }, origin);
+  }
+
   const resource = parts[2];
   if (!resource || !isResourceName(resource)) {
     return json({ error: '资源不存在' }, { status: 404 }, origin);
@@ -125,6 +144,11 @@ const handleAdmin = async (request: Request, env: Env, parts: string[], origin: 
 const handlePublic = async (request: Request, env: Env, parts: string[], origin: string) => {
   if (parts[1] === 'health') {
     return json({ data: { ok: true, service: 'fitness-api' } }, {}, origin);
+  }
+
+  if (parts[1] === 'settings') {
+    if (request.method !== 'GET') return json({ error: '方法不支持' }, { status: 405 }, origin);
+    return json({ data: await getSiteSettings(env.FITNESS_KV) }, {}, origin);
   }
 
   const resource = parts[1];

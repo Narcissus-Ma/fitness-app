@@ -78,6 +78,11 @@ export interface AssessmentInput {
   activityLevel: ActivityLevel;
 }
 
+export interface SiteSettings {
+  assessmentDefaults: AssessmentInput;
+  updatedAt: string;
+}
+
 export interface BmiCategory {
   key: BmiCategoryKey;
   label: string;

@@ -1,6 +1,11 @@
-import { ActivityLevel, AssessmentInput, calculateAssessment } from '@fitness/shared';
+import {
+  ActivityLevel,
+  AssessmentInput,
+  calculateAssessment,
+  defaultAssessmentDefaults,
+} from '@fitness/shared';
 import { Alert, Button, Card, Form, InputNumber, Radio, Select, Statistic, Tag } from 'antd';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import styles from './assessment-panel.module.css';
 
@@ -12,21 +17,24 @@ const activityOptions: Array<{ label: string; value: ActivityLevel }> = [
   { label: '很高活动量', value: 'very-active' },
 ];
 
-const initialValues: AssessmentInput = {
-  heightCm: 170,
-  weightKg: 70,
-  age: 30,
-  gender: 'female',
-  activityLevel: 'light',
-};
-
 interface AssessmentPanelProps {
+  initialValues?: AssessmentInput;
   onCategoryChange: (category: string) => void;
 }
 
-const AssessmentPanel = ({ onCategoryChange }: AssessmentPanelProps) => {
+const AssessmentPanel = ({
+  initialValues = defaultAssessmentDefaults,
+  onCategoryChange,
+}: AssessmentPanelProps) => {
+  const [form] = Form.useForm<AssessmentInput>();
   const [formValues, setFormValues] = useState<AssessmentInput>(initialValues);
   const result = useMemo(() => calculateAssessment(formValues), [formValues]);
+
+  useEffect(() => {
+    form.setFieldsValue(initialValues);
+    setFormValues(initialValues);
+    onCategoryChange(calculateAssessment(initialValues).bmiCategory.key);
+  }, [form, initialValues, onCategoryChange]);
 
   const handleFinish = (values: AssessmentInput) => {
     setFormValues(values);
@@ -40,7 +48,7 @@ const AssessmentPanel = ({ onCategoryChange }: AssessmentPanelProps) => {
           <span>健康状态评估</span>
           <p>输入基础信息，估算 BMI、基础代谢和每日总消耗。</p>
         </div>
-        <Form layout="vertical" initialValues={initialValues} onFinish={handleFinish}>
+        <Form form={form} layout="vertical" initialValues={initialValues} onFinish={handleFinish}>
           <div className={styles.formGrid}>
             <Form.Item
               label="身高（cm）"

@@ -28,6 +28,8 @@ VITE_API_BASE_URL=http://localhost:8787
 ADMIN_PASSWORD=请输入后台密码
 ```
 
+登录后台后，侧边栏的“首页配置”可维护首页健康评估表单默认值，包括身高、体重、年龄、性别和活动水平。配置保存到 Workers KV，并通过公开接口 `GET /api/settings` 供前端首页读取。
+
 ## 后端 Wrangler 验证
 
 上线前先启动 Worker 本地环境：

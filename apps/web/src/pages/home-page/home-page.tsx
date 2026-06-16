@@ -1,5 +1,5 @@
 import { Button, Card, Skeleton } from 'antd';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import type { BmiCategoryKey } from '@fitness/shared';
@@ -9,6 +9,7 @@ import ContentCard from '@/features/catalog/components/content-card';
 import PublicLayout from '@/layouts/public-layout';
 import { catalogService } from '@/services/catalog.service';
 import { useCatalog } from '@/hooks/use-catalog';
+import { useSiteSettings } from '@/hooks/use-site-settings';
 import { toTextList } from '@/utils/format';
 
 import styles from './home-page.module.css';
@@ -17,6 +18,10 @@ const HomePage = () => {
   const [category, setCategory] = useState<BmiCategoryKey>('normal');
   const exercises = useCatalog({ loader: catalogService.listExercises });
   const recipes = useCatalog({ loader: catalogService.listRecipes });
+  const siteSettings = useSiteSettings();
+  const handleCategoryChange = useCallback((value: string) => {
+    setCategory(value as BmiCategoryKey);
+  }, []);
 
   const recommendedRecipes = useMemo(
     () =>
@@ -36,7 +41,10 @@ const HomePage = () => {
         </div>
       </section>
 
-      <AssessmentPanel onCategoryChange={(value) => setCategory(value as BmiCategoryKey)} />
+      <AssessmentPanel
+        initialValues={siteSettings.settings.assessmentDefaults}
+        onCategoryChange={handleCategoryChange}
+      />
 
       <section className={styles.recommendations}>
         <div className={styles.sectionHeader}>

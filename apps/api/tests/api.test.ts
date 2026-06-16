@@ -76,6 +76,51 @@ describe('Worker API', () => {
     expect(exerciseBody.data.length).toBeGreaterThan(0);
   });
 
+  it('公开读取首页健康评估默认配置，管理员可更新配置', async () => {
+    const env = createEnv();
+
+    const initial = await worker.fetch(request('/api/settings'), env);
+    const initialBody = (await initial.json()) as {
+      data: { assessmentDefaults: { heightCm: number } };
+    };
+    expect(initialBody.data.assessmentDefaults.heightCm).toBe(170);
+
+    const login = await worker.fetch(
+      request('/api/admin/login', {
+        method: 'POST',
+        body: JSON.stringify({ password: '请输入后台密码' }),
+      }),
+      env,
+    );
+    const loginBody = (await login.json()) as { data: { token: string } };
+
+    const updated = await worker.fetch(
+      request('/api/admin/settings', {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${loginBody.data.token}` },
+        body: JSON.stringify({
+          assessmentDefaults: {
+            heightCm: 165,
+            weightKg: 62,
+            age: 28,
+            gender: 'female',
+            activityLevel: 'moderate',
+          },
+        }),
+      }),
+      env,
+    );
+
+    const publicSettings = await worker.fetch(request('/api/settings'), env);
+    const publicBody = (await publicSettings.json()) as {
+      data: { assessmentDefaults: { heightCm: number; activityLevel: string } };
+    };
+
+    expect(updated.status).toBe(200);
+    expect(publicBody.data.assessmentDefaults.heightCm).toBe(165);
+    expect(publicBody.data.assessmentDefaults.activityLevel).toBe('moderate');
+  });
+
   it('拒绝未登录的后台写入请求', async () => {
     const env = createEnv();
 

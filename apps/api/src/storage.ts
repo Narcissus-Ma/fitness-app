@@ -1,10 +1,20 @@
-import { seedCatalog, type Catalog, type ResourceItem, type ResourceName } from '@fitness/shared';
+import {
+  defaultSiteSettings,
+  normalizeSiteSettings,
+  seedCatalog,
+  type Catalog,
+  type ResourceItem,
+  type ResourceName,
+  type SiteSettings,
+} from '@fitness/shared';
 
 const resourceKeys: ResourceName[] = ['exercises', 'foods', 'recipes', 'medicines'];
 
 const indexKey = (resource: ResourceName) => `${resource}:index`;
 
 const itemKey = (resource: ResourceName, id: string) => `${resource}:${id}`;
+
+const siteSettingsKey = 'site:settings';
 
 const ensureSeeded = async (kv: KVNamespace): Promise<void> => {
   const seeded = await kv.get('catalog:seeded');
@@ -88,3 +98,24 @@ export const createCatalogSnapshot = async (kv: KVNamespace): Promise<Catalog> =
   recipes: await listItems(kv, 'recipes'),
   medicines: await listItems(kv, 'medicines'),
 });
+
+export const getSiteSettings = async (kv: KVNamespace): Promise<SiteSettings> => {
+  const raw = await kv.get(siteSettingsKey);
+  if (!raw) return defaultSiteSettings;
+
+  return normalizeSiteSettings(JSON.parse(raw) as Partial<SiteSettings>);
+};
+
+export const updateSiteSettings = async (
+  kv: KVNamespace,
+  settings: Partial<SiteSettings>,
+): Promise<SiteSettings> => {
+  const nextSettings = normalizeSiteSettings({
+    ...settings,
+    updatedAt: new Date().toISOString(),
+  });
+
+  await kv.put(siteSettingsKey, JSON.stringify(nextSettings));
+
+  return nextSettings;
+};

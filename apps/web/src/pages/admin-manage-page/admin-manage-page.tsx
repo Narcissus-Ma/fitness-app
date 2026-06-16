@@ -14,15 +14,18 @@ import type { ResourceItem, ResourceName } from '@fitness/shared';
 
 import { adminResourceConfigs } from '@/features/admin/admin-resource-config';
 import ResourceForm from '@/features/admin/components/resource-form';
+import SiteSettingsForm from '@/features/admin/components/site-settings-form';
 import { adminService } from '@/services/admin.service';
 
 import styles from './admin-manage-page.module.css';
 
 const formId = 'resource-form';
 
+type AdminMenuKey = ResourceName | 'settings';
+
 const AdminManagePage = () => {
   const navigate = useNavigate();
-  const [activeResource, setActiveResource] = useState<ResourceName>('exercises');
+  const [activeMenu, setActiveMenu] = useState<AdminMenuKey>('settings');
   const [items, setItems] = useState<ResourceItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [editingItem, setEditingItem] = useState<ResourceItem>();
@@ -30,21 +33,22 @@ const AdminManagePage = () => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const config = useMemo(
-    () => adminResourceConfigs.find((item) => item.resource === activeResource)!,
-    [activeResource],
+    () => adminResourceConfigs.find((item) => item.resource === activeMenu),
+    [activeMenu],
   );
 
   const load = useCallback(async () => {
+    if (!config) return;
     setLoading(true);
     try {
-      setItems(await adminService.list(activeResource));
+      setItems(await adminService.list(config.resource));
     } catch (error) {
       messageApi.error(error instanceof Error ? error.message : '加载失败');
       navigate('/admin');
     } finally {
       setLoading(false);
     }
-  }, [activeResource, messageApi, navigate]);
+  }, [config, messageApi, navigate]);
 
   useEffect(() => {
     void load();
@@ -53,9 +57,9 @@ const AdminManagePage = () => {
   const handleSubmit = async (values: Record<string, unknown>) => {
     try {
       if (editingItem) {
-        await adminService.update(activeResource, editingItem.id, values);
+        await adminService.update(config!.resource, editingItem.id, values);
       } else {
-        await adminService.create(activeResource, values);
+        await adminService.create(config!.resource, values);
       }
       messageApi.success('保存成功');
       setDrawerOpen(false);
@@ -74,7 +78,8 @@ const AdminManagePage = () => {
       okButtonProps: { danger: true },
       cancelText: '取消',
       onOk: async () => {
-        await adminService.remove(activeResource, item.id);
+        if (!config) return;
+        await adminService.remove(config.resource, item.id);
         await load();
       },
     });
@@ -125,8 +130,9 @@ const AdminManagePage = () => {
           <Button
             icon={<PoweroffOutlined />}
             onClick={async () => {
+              if (!config) return;
               await adminService.setStatus(
-                activeResource,
+                config.resource,
                 record.id,
                 record.status === 'enabled' ? 'disabled' : 'enabled',
               );
@@ -148,31 +154,44 @@ const AdminManagePage = () => {
         <div className={styles.brand}>健康减脂后台</div>
         <Menu
           theme="dark"
-          selectedKeys={[activeResource]}
-          items={adminResourceConfigs.map((item) => ({ key: item.resource, label: item.title }))}
-          onClick={({ key }) => setActiveResource(key as ResourceName)}
+          selectedKeys={[activeMenu]}
+          items={[
+            { key: 'settings', label: '首页配置' },
+            ...adminResourceConfigs.map((item) => ({ key: item.resource, label: item.title })),
+          ]}
+          onClick={({ key }) => {
+            setActiveMenu(key as AdminMenuKey);
+            setEditingItem(undefined);
+            setDrawerOpen(false);
+          }}
         />
       </Layout.Sider>
       <Layout className={styles.contentLayout}>
         <header className={styles.header}>
           <div>
-            <h1>{config.title}</h1>
-            <p>结构化维护前台展示内容，保存后将同步写入 Workers KV。</p>
+            <h1>{config ? config.title : '首页配置'}</h1>
+            <p>
+              {config
+                ? '结构化维护前台展示内容，保存后将同步写入 Workers KV。'
+                : '设置首页健康评估表单的默认身高、体重、年龄、性别和活动水平。'}
+            </p>
           </div>
           <Space>
             <Button icon={<HomeOutlined />} onClick={() => navigate('/')}>
               回到主页
             </Button>
-            <Button
-              icon={<PlusOutlined />}
-              type="primary"
-              onClick={() => {
-                setEditingItem(undefined);
-                setDrawerOpen(true);
-              }}
-            >
-              新增
-            </Button>
+            {config && (
+              <Button
+                icon={<PlusOutlined />}
+                type="primary"
+                onClick={() => {
+                  setEditingItem(undefined);
+                  setDrawerOpen(true);
+                }}
+              >
+                新增
+              </Button>
+            )}
             <Button
               onClick={() => {
                 adminService.logout();
@@ -184,19 +203,23 @@ const AdminManagePage = () => {
           </Space>
         </header>
         <main className={styles.main}>
-          <Table
-            rowKey="id"
-            loading={loading}
-            columns={columns}
-            dataSource={items}
-            scroll={{ x: 900 }}
-            pagination={{ pageSize: 8 }}
-          />
+          {config ? (
+            <Table
+              rowKey="id"
+              loading={loading}
+              columns={columns}
+              dataSource={items}
+              scroll={{ x: 900 }}
+              pagination={{ pageSize: 8 }}
+            />
+          ) : (
+            <SiteSettingsForm />
+          )}
         </main>
       </Layout>
       <Drawer
         width={560}
-        title={editingItem ? `编辑${config.title}` : `新增${config.title}`}
+        title={editingItem ? `编辑${config?.title}` : `新增${config?.title}`}
         open={drawerOpen}
         destroyOnHidden
         onClose={() => {
@@ -209,7 +232,14 @@ const AdminManagePage = () => {
           </Button>
         }
       >
-        <ResourceForm config={config} item={editingItem} formId={formId} onSubmit={handleSubmit} />
+        {config && (
+          <ResourceForm
+            config={config}
+            item={editingItem}
+            formId={formId}
+            onSubmit={handleSubmit}
+          />
+        )}
       </Drawer>
     </Layout>
   );
