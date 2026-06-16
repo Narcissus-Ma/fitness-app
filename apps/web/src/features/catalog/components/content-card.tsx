@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import type { Exercise, Food, Medicine, Recipe, ResourceItem, ResourceName } from '@fitness/shared';
 
-import { formatCalories, joinText } from '@/utils/format';
+import { formatCalories, joinText, toTextList } from '@/utils/format';
 
 import styles from './content-card.module.css';
 
@@ -55,7 +55,7 @@ const ContentCard = ({ resource, item }: ContentCardProps) => (
         ))}
       </div>
       <div className={styles.tags}>
-        {item.tags.map((tag) => (
+        {toTextList(item.tags).map((tag) => (
           <Tag key={tag}>{tag}</Tag>
         ))}
       </div>

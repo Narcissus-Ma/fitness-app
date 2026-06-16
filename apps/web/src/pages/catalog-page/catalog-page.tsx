@@ -8,6 +8,7 @@ import ContentCard from '@/features/catalog/components/content-card';
 import { catalogConfigs, isCatalogResource } from '@/features/catalog/catalog-config';
 import PublicLayout from '@/layouts/public-layout';
 import { useCatalog } from '@/hooks/use-catalog';
+import { toTextList } from '@/utils/format';
 
 import styles from './catalog-page.module.css';
 
@@ -39,7 +40,7 @@ const CatalogPage = () => {
         const matchedKeyword =
           item.name.includes(keyword) ||
           item.summary.includes(keyword) ||
-          item.tags.some((tag) => tag.includes(keyword));
+          toTextList(item.tags).some((tag) => tag.includes(keyword));
         const matchedFilter =
           !filter ||
           config.filters.some((field) => {

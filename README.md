@@ -50,6 +50,12 @@ curl -sS http://localhost:8787/api/exercises
 1. 创建 Workers KV 命名空间和 preview 命名空间。
 2. 替换 `apps/api/wrangler.toml` 中的 `id` 与 `preview_id`。
 3. 设置生产环境变量：`ADMIN_PASSWORD` 或 `sha256:<hash>`、`AUTH_SIGNING_SECRET`、`CORS_ORIGIN`。
+   `CORS_ORIGIN` 支持逗号分隔多个前端域名，例如：
+
+```bash
+CORS_ORIGIN=https://你的前端.pages.dev,https://你的自定义域名
+```
+
 4. 执行 `pnpm --filter @fitness/api deploy` 部署后端。
 5. 将 `apps/web/.env.production` 的 `VITE_API_BASE_URL` 改为线上 Worker 地址。
 6. 执行 `pnpm --filter @fitness/web build`，并将 `apps/web/dist` 部署到 Cloudflare Pages。

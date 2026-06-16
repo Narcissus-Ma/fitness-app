@@ -3,8 +3,8 @@ main = "src/index.ts"
 compatibility_date = "2026-06-16"
 
 [vars]
-CORS_ORIGIN = "http://localhost:5173"
-ADMIN_PASSWORD = "请输入后台密码"
+CORS_ORIGIN = "http://localhost:5173,https://fitness-web.example.pages.dev"
+ADMIN_PASSWORD = "murphy520"
 AUTH_SIGNING_SECRET = "dev-secret-change-before-production"
 
 [[kv_namespaces]]

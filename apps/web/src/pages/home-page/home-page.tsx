@@ -9,6 +9,7 @@ import ContentCard from '@/features/catalog/components/content-card';
 import PublicLayout from '@/layouts/public-layout';
 import { catalogService } from '@/services/catalog.service';
 import { useCatalog } from '@/hooks/use-catalog';
+import { toTextList } from '@/utils/format';
 
 import styles from './home-page.module.css';
 
@@ -18,7 +19,8 @@ const HomePage = () => {
   const recipes = useCatalog({ loader: catalogService.listRecipes });
 
   const recommendedRecipes = useMemo(
-    () => recipes.items.filter((item) => item.suitableFor.includes(category)).slice(0, 2),
+    () =>
+      recipes.items.filter((item) => toTextList(item.suitableFor).includes(category)).slice(0, 2),
     [category, recipes.items],
   );
 

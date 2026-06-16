@@ -38,6 +38,31 @@ const request = (path: string, init?: RequestInit) =>
   new Request(`https://api.example.com${path}`, init);
 
 describe('Worker API', () => {
+  it('根据请求 Origin 匹配多环境 CORS 配置并处理预检请求', async () => {
+    const env = {
+      ...createEnv(),
+      CORS_ORIGIN: 'http://localhost:5173,https://fitness-web.pages.dev',
+    };
+
+    const response = await worker.fetch(
+      request('/api/admin/login', {
+        method: 'OPTIONS',
+        headers: {
+          Origin: 'https://fitness-web.pages.dev',
+          'Access-Control-Request-Method': 'POST',
+          'Access-Control-Request-Headers': 'Content-Type, Authorization',
+        },
+      }),
+      env,
+    );
+
+    expect(response.headers.get('Access-Control-Allow-Origin')).toBe(
+      'https://fitness-web.pages.dev',
+    );
+    expect(response.headers.get('Vary')).toBe('Origin');
+    expect(response.headers.get('Access-Control-Allow-Headers')).toContain('Authorization');
+  });
+
   it('返回健康检查和公开种子内容', async () => {
     const env = createEnv();
 

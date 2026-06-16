@@ -1,4 +1,10 @@
-import { DeleteOutlined, EditOutlined, PlusOutlined, PoweroffOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  HomeOutlined,
+  PlusOutlined,
+  PoweroffOutlined,
+} from '@ant-design/icons';
 import { Button, Drawer, Layout, Menu, Modal, Space, Table, Tag, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -154,6 +160,9 @@ const AdminManagePage = () => {
             <p>结构化维护前台展示内容，保存后将同步写入 Workers KV。</p>
           </div>
           <Space>
+            <Button icon={<HomeOutlined />} onClick={() => navigate('/')}>
+              回到主页
+            </Button>
             <Button
               icon={<PlusOutlined />}
               type="primary"
@@ -189,7 +198,11 @@ const AdminManagePage = () => {
         width={560}
         title={editingItem ? `编辑${config.title}` : `新增${config.title}`}
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        destroyOnHidden
+        onClose={() => {
+          setDrawerOpen(false);
+          setEditingItem(undefined);
+        }}
         extra={
           <Button type="primary" htmlType="submit" form={formId}>
             保存

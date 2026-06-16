@@ -56,8 +56,9 @@ const ResourceForm = ({ config, item, formId, onSubmit }: ResourceFormProps) => 
   const [form] = Form.useForm();
 
   useEffect(() => {
+    form.resetFields();
     form.setFieldsValue(normalizeInitialValue(item));
-  }, [form, item]);
+  }, [config.resource, form, item]);
 
   return (
     <Form

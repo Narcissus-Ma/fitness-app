@@ -7,7 +7,7 @@ import type { Exercise, Food, Medicine, Recipe, ResourceItem } from '@fitness/sh
 import { catalogConfigs, isCatalogResource } from '@/features/catalog/catalog-config';
 import PublicLayout from '@/layouts/public-layout';
 import { catalogService } from '@/services/catalog.service';
-import { formatCalories, joinText } from '@/utils/format';
+import { formatCalories, joinText, toTextList } from '@/utils/format';
 
 import styles from './detail-page.module.css';
 
@@ -87,7 +87,7 @@ const DetailPage = () => {
             <h1>{item.name}</h1>
             <p>{item.summary}</p>
             <div>
-              {item.tags.map((tag) => (
+              {toTextList(item.tags).map((tag) => (
                 <Tag key={tag}>{tag}</Tag>
               ))}
             </div>
@@ -100,7 +100,7 @@ const DetailPage = () => {
                 </Descriptions.Item>
               ))}
               <Descriptions.Item label="来源">
-                {item.sourceUrls.map((url) => (
+                {toTextList(item.sourceUrls).map((url) => (
                   <a key={url} href={url} target="_blank" rel="noreferrer">
                     {url}
                   </a>

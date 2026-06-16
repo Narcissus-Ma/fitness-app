@@ -1,7 +1,7 @@
 import type { ResourceItem } from '@fitness/shared';
 
 import { getBearerToken, signToken, verifyPassword, verifyToken } from './auth';
-import { json, readJson } from './http';
+import { createCorsHeaders, json, readJson, resolveCorsOrigin } from './http';
 import { deleteItem, getItem, isResourceName, listItems, upsertItem } from './storage';
 
 export interface Env {
@@ -147,8 +147,13 @@ const handlePublic = async (request: Request, env: Env, parts: string[], origin:
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const origin = env.CORS_ORIGIN || '*';
-    if (request.method === 'OPTIONS') return json({ data: { ok: true } }, {}, origin);
+    const origin = resolveCorsOrigin(request, env.CORS_ORIGIN || '*');
+    if (request.method === 'OPTIONS') {
+      return new Response(null, {
+        status: 204,
+        headers: createCorsHeaders(origin),
+      });
+    }
 
     try {
       const url = new URL(request.url);
