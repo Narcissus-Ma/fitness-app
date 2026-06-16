@@ -1,13 +1,14 @@
 name = "fitness-api"
 main = "src/index.ts"
 compatibility_date = "2026-06-16"
+routes = [
+  { pattern = "fitness-api.cup.kdns.fr", custom_domain = true }
+]
 
 [vars]
-CORS_ORIGIN = "http://localhost:5173,https://fitness-web.example.pages.dev"
-ADMIN_PASSWORD = "murphy520"
-AUTH_SIGNING_SECRET = "dev-secret-change-before-production"
+CORS_ORIGIN = "http://localhost:5173,https://fitness.cup.kdns.fr"
 
 [[kv_namespaces]]
 binding = "FITNESS_KV"
-id = "replace-with-production-kv-id"
-preview_id = "replace-with-preview-kv-id"
+id = "88988ce47b434b25bdef2c06d3b99531"
+preview_id = "9dce1f45abf04696b2abbdca6f8c4274"
