@@ -1,0 +1,27 @@
+.page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+  background: #eef7f3;
+}
+
+.card {
+  width: min(420px, 100%);
+  border: 1px solid #dcebe5;
+}
+
+.card h1 {
+  margin: 0 0 8px;
+  color: #143b33;
+}
+
+.card p {
+  margin: 0 0 20px;
+  color: #667085;
+}
+
+.alert {
+  margin-bottom: 16px;
+}

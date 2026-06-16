@@ -1,0 +1,32 @@
+{
+  "name": "fitness-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --filter @fitness/web dev",
+    "api:dev": "pnpm --filter @fitness/api dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.8.19",
+    "@cloudflare/workers-types": "^4.20250614.0",
+    "@eslint/js": "^9.39.4",
+    "@types/react": "^19.0.12",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^9.29.0",
+    "postcss": "^8.5.6",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.49.0",
+    "vite": "^6.3.5",
+    "vitest": "^3.2.4",
+    "wrangler": "^4.20.0"
+  },
+  "packageManager": "pnpm@10.12.4"
+}

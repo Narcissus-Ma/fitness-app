@@ -1,0 +1,13 @@
+name = "fitness-api"
+main = "src/index.ts"
+compatibility_date = "2026-06-16"
+
+[vars]
+CORS_ORIGIN = "http://localhost:5173"
+ADMIN_PASSWORD = "请输入后台密码"
+AUTH_SIGNING_SECRET = "dev-secret-change-before-production"
+
+[[kv_namespaces]]
+binding = "FITNESS_KV"
+id = "replace-with-production-kv-id"
+preview_id = "replace-with-preview-kv-id"

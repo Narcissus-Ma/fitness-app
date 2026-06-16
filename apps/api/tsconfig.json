@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["@cloudflare/workers-types", "vitest/globals"],
+    "paths": {
+      "@fitness/shared": ["../../packages/shared/src/index.ts"]
+    }
+  },
+  "include": ["src", "tests", "worker-configuration.d.ts"]
+}

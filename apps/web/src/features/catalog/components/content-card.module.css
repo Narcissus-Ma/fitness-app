@@ -1,0 +1,42 @@
+.card {
+  height: 100%;
+  border-color: #e2ebe6;
+}
+
+.topLine {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.topLine strong {
+  color: #173b33;
+  font-size: 18px;
+}
+
+.card p {
+  min-height: 44px;
+  margin: 12px 0;
+  color: #59666f;
+  line-height: 1.7;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.meta span {
+  padding: 4px 8px;
+  color: #31564d;
+  font-size: 12px;
+  background: #edf7f2;
+  border-radius: 6px;
+}
+
+.tags {
+  min-height: 24px;
+}

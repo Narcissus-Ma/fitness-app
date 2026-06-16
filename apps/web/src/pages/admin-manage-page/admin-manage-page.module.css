@@ -1,0 +1,65 @@
+.page {
+  min-height: 100vh;
+}
+
+.sider {
+  min-height: 100vh;
+}
+
+.brand {
+  height: 64px;
+  padding: 22px 20px;
+  color: #fff;
+  font-weight: 700;
+}
+
+.contentLayout {
+  background: #f6f8f7;
+}
+
+.header {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 28px;
+  background: #fff;
+  border-bottom: 1px solid #e4ece7;
+}
+
+.header h1 {
+  margin: 0 0 6px;
+  color: #143b33;
+}
+
+.header p {
+  margin: 0;
+  color: #667085;
+}
+
+.main {
+  padding: 24px;
+}
+
+.summary {
+  margin: 4px 0 0;
+  color: #667085;
+}
+
+@media (max-width: 760px) {
+  .page {
+    display: block;
+  }
+
+  .sider {
+    min-height: auto;
+    width: 100% !important;
+    max-width: none !important;
+    flex: none !important;
+  }
+
+  .header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
